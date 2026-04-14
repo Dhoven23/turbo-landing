@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instamaxxing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #050505;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: #0a0a0a;
+    border-radius: 44px;
+    border: 3px solid #222;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px #111,
+      0 20px 60px rgba(0,0,0,0.8),
+      0 0 80px rgba(200,255,0,0.03);
+  }
+
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 34px;
+    background: #0a0a0a;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+
+  .notch::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 6px;
+    background: #1a1a1a;
+    border-radius: 3px;
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 28px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    position: relative;
+    z-index: 5;
+  }
+
+  .screen {
+    height: calc(100% - 34px);
+    overflow-y: auto;
+    padding: 48px 24px 40px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  .brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c8ff00;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #e8e8e8;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  h1 .strike {
+    text-decoration: line-through;
+    color: #444;
+    font-weight: 400;
+  }
+
+  .sub {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #1a1a1a;
+    margin: 24px 0;
+  }
+
+  /* ---- SPLIT COLUMNS ---- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .col-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .col-label.red { color: #ff3b3b; }
+  .col-label.green { color: #00d26a; }
+
+  .col-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .col-item {
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 8px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .col-item .icon {
+    flex-shrink: 0;
+    font-size: 9px;
+    margin-top: 2px;
+  }
+
+  .left-col .col-item {
+    background: #1a0a0a;
+    color: #884444;
+    border: 1px solid #2a1111;
+  }
+  .left-col .icon { color: #ff3b3b; }
+
+  .right-col .col-item {
+    background: #0a1a0a;
+    color: #aaddaa;
+    border: 1px solid #112a11;
+  }
+  .right-col .icon { color: #c8ff00; }
+
+  /* ---- OFFER DETAILS ---- */
+  .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8ff00;
+    margin-bottom: 12px;
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .feature {
+    padding: 10px 12px;
+    background: #111;
+    border-radius: 8px;
+  }
+
+  .feature-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e8e8e8;
+    margin-bottom: 2px;
+  }
+
+  .feature-desc {
+    font-size: 10px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* ---- COMPACT PRICING ---- */
+  .pricing-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .price-box {
+    padding: 14px;
+    background: #111;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .price-box.pop {
+    border-color: #c8ff00;
+  }
+
+  .pb-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #e8e8e8;
+  }
+
+  .pb-for {
+    font-size: 9px;
+    color: #444;
+    margin-bottom: 8px;
+  }
+
+  .pb-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #e8e8e8;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+
+  .pb-price span {
+    font-size: 12px;
+    font-weight: 400;
+    color: #444;
+    letter-spacing: 0;
+  }
+
+  .pb-note {
+    font-size: 9px;
+    color: #333;
+    margin-top: 4px;
+  }
+
+  /* ---- GUARANTEE ---- */
+  .guarantee {
+    text-align: center;
+    padding: 14px;
+    border: 1px dashed #1a1a1a;
+    border-radius: 8px;
+  }
+
+  .guarantee-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e8e8e8;
+    margin-bottom: 3px;
+  }
+
+  .guarantee-text {
+    font-size: 10px;
+    color: #444;
+    line-height: 1.5;
+  }
+
+  .footer-line {
+    text-align: center;
+    font-size: 9px;
+    color: #2a2a2a;
+    margin-top: 20px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  .home-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #333;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>&#9679;&#9679;&#9679;&#9679;&#9675; &#9612;&#9608;&#9612;</span>
+  </div>
+
+  <div class="screen">
+
+    <div class="brand">Instamaxxing</div>
+    <h1>We grow your Instagram with <span class="strike">followers</span> future&nbsp;customers.</h1>
+    <p class="sub">Targeted prospect identification and human-patterned engagement. Every action logged. Your account never at risk.</p>
+
+    <div class="divider"></div>
+
+    <!-- RED vs GREEN -->
+    <div class="split">
+      <div class="left-col">
+        <div class="col-label red">Everyone else</div>
+        <div class="col-items">
+          <div class="col-item"><span class="icon">&#10005;</span> Fake followers</div>
+          <div class="col-item"><span class="icon">&#10005;</span> Account bans</div>
+          <div class="col-item"><span class="icon">&#10005;</span> Random hashtag spray</div>
+          <div class="col-item"><span class="icon">&#10005;</span> Zero transparency</div>
+          <div class="col-item"><span class="icon">&#10005;</span> Vanity metrics</div>
+        </div>
+      </div>
+      <div class="right-col">
+        <div class="col-label green">Instamaxxing</div>
+        <div class="col-items">
+          <div class="col-item"><span class="icon">&#9670;</span> Real prospects</div>
+          <div class="col-item"><span class="icon">&#9670;</span> Engineered safety</div>
+          <div class="col-item"><span class="icon">&#9670;</span> ICP graph targeting</div>
+          <div class="col-item"><span class="icon">&#9670;</span> Full audit trail</div>
+          <div class="col-item"><span class="icon">&#9670;</span> Leads you can close</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHAT YOU GET -->
+    <div class="label">What's included</div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-title">ICP-Targeted Prospect Lists</div>
+        <div class="feature-desc">Competitor follower overlap, engagement scoring, network mapping. We find people who actually match your ideal customer.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Autonomous Daily Engagement</div>
+        <div class="feature-desc">Story views, likes, follows -- session-based, human-timed, with 45-day warm-up and hourly budget caps.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Weekly Prospect Report</div>
+        <div class="feature-desc">Who engaged back, who followed, who's ready for a DM. You do the human part.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PRICING -->
+    <div class="pricing-strip">
+      <div class="price-box">
+        <div class="pb-name">Starter</div>
+        <div class="pb-for">1 account</div>
+        <div class="pb-price">$99<span>/mo</span></div>
+        <div class="pb-note">Cancel anytime</div>
+      </div>
+      <div class="price-box pop">
+        <div class="pb-name">Growth</div>
+        <div class="pb-for">Teams & agencies</div>
+        <div class="pb-price">$250<span>/mo</span></div>
+        <div class="pb-note">Cancel anytime</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- GUARANTEE -->
+    <div class="guarantee">
+      <div class="guarantee-title">Zero-risk guarantee</div>
+      <p class="guarantee-text">Account restricted by our service? We pause, cover recovery, and refund your last month.</p>
+    </div>
+
+    <div class="footer-line">Built by engineers, not marketers.</div>
+
+  </div>
+  <div class="home-bar"></div>
+</div>
+
+</body>
+</html>

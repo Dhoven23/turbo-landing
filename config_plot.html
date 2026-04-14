@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turbo — Session Config Visualizer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a10;
+    --surface: #111118;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8e8ed;
+    --dim: #6a6a7c;
+    --accent: #6c5ce7;
+    --accent-l: #a29bfe;
+    --pink: #fd79a8;
+    --green: #00cec9;
+    --orange: #fdcb6e;
+    --red: #ff6b6b;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 40px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  h1 span { color: var(--accent-l); }
+  .subtitle { color: var(--dim); font-size: 0.875rem; margin-bottom: 48px; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .card.full { grid-column: 1 / -1; }
+  .card h2 {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    margin-bottom: 20px;
+  }
+
+  /* Bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: end;
+    gap: 2px;
+    height: 140px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bar-chart .bar {
+    flex: 1;
+    border-radius: 3px 3px 0 0;
+    min-width: 8px;
+    position: relative;
+    cursor: crosshair;
+    transition: filter 0.2s;
+  }
+  .bar-chart .bar:hover { filter: brightness(1.4); }
+  .bar-chart .bar .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.6875rem;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .bar-chart .bar:hover .tooltip { display: block; }
+  .bar-labels {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+  }
+  .bar-labels span {
+    font-size: 0.625rem;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Horizontal bars */
+  .h-bars { display: flex; flex-direction: column; gap: 12px; }
+  .h-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .h-bar-label {
+    width: 100px;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .h-bar-track {
+    flex: 1;
+    height: 24px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .h-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 0.6875rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .h-bar-range {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.625rem;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Donut chart */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .donut-svg { width: 140px; height: 140px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+  .donut-legend-item .swatch {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .donut-legend-item .pct {
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    margin-left: auto;
+  }
+
+  /* Warmup curve */
+  .curve-svg {
+    width: 100%;
+    height: 160px;
+  }
+
+  /* Pairs & breaks */
+  .pair-list { display: flex; flex-direction: column; gap: 10px; }
+  .pair-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+  }
+  .pair-item .arrow { color: var(--dim); }
+  .pair-item .prob {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-l);
+    font-weight: 600;
+  }
+
+  .break-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .break-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .break-card .cat {
+    font-size: 0.6875rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .break-card .range {
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .break-card .hours {
+    font-size: 0.625rem;
+    color: var(--dim);
+    margin-top: 4px;
+  }
+
+  /* Follow caps */
+  .cap-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .cap-table th, .cap-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .cap-table th {
+    color: var(--dim);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .cap-table td:last-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    .card.full { grid-column: 1; }
+    .donut-container { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+    <div>
+      <h1>Session Config <span>Visualizer</span></h1>
+      <p class="subtitle" style="margin-bottom:0;">Current engine configuration — all values from config.py</p>
+    </div>
+    <a href="index.html" style="color:var(--accent-l);text-decoration:none;font-size:0.875rem;font-weight:500;">&larr; Back to Home</a>
+  </div>
+
+  <div class="grid">
+
+    <!-- Hourly weights -->
+    <div class="card full">
+      <h2>Session Distribution (24h)</h2>
+      <div class="bar-chart" id="hourlyChart"></div>
+      <div class="bar-labels">
+        <span>12am</span><span>3am</span><span>6am</span><span>9am</span><span>12pm</span><span>3pm</span><span>6pm</span><span>9pm</span><span>12am</span>
+      </div>
+    </div>
+
+    <!-- Action delays -->
+    <div class="card">
+      <h2>Action Delays (seconds)</h2>
+      <div class="h-bars" id="delayBars"></div>
+    </div>
+
+    <!-- Action weights -->
+    <div class="card">
+      <h2>Action Weight Distribution</h2>
+      <div class="donut-container">
+        <svg class="donut-svg" viewBox="0 0 100 100" id="donutSvg"></svg>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+    </div>
+
+    <!-- Warmup curve -->
+    <div class="card">
+      <h2>45-Day Warmup Curve</h2>
+      <svg class="curve-svg" id="warmupCurve" viewBox="0 0 400 160"></svg>
+    </div>
+
+    <!-- Follow daily caps -->
+    <div class="card">
+      <h2>Follow Daily Caps</h2>
+      <table class="cap-table">
+        <thead><tr><th>Account Age</th><th>Max Follows/Day</th></tr></thead>
+        <tbody>
+          <tr><td>Day 1–7</td><td>15</td></tr>
+          <tr><td>Day 8–14</td><td>30</td></tr>
+          <tr><td>Day 15–30</td><td>50</td></tr>
+          <tr><td>Day 30+</td><td>80</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Natural pairs -->
+    <div class="card">
+      <h2>Natural Action Pairs</h2>
+      <div class="pair-list">
+        <div class="pair-item">
+          <span>profile_view</span>
+          <span class="arrow">&rarr;</span>
+          <span>follow</span>
+          <span class="prob">70%</span>
+        </div>
+        <div class="pair-item">
+          <span>story_view</span>
+          <span class="arrow">&rarr;</span>
+          <span>story_like</span>
+          <span class="prob">90%</span>
+        </div>
+        <div class="pair-item">
+          <span>post_like</span>
+          <span class="arrow">&rarr;</span>
+          <span>comment_like</span>
+          <span class="prob">50%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Break ranges -->
+    <div class="card">
+      <h2>Break Duration Between Sessions</h2>
+      <div class="break-grid">
+        <div class="break-card">
+          <div class="cat">Peak</div>
+          <div class="range" style="color:var(--pink)">5–15m</div>
+          <div class="hours">12–1pm, 5–7pm</div>
+        </div>
+        <div class="break-card">
+          <div class="cat">Normal</div>
+          <div class="range" style="color:var(--accent-l)">10–30m</div>
+          <div class="hours">6–7am, 8–10pm</div>
+        </div>
+        <div class="break-card">
+          <div class="cat">Work</div>
+          <div class="range" style="color:var(--orange)">15–45m</div>
+          <div class="hours">8–11am, 2–4pm</div>
+        </div>
+        <div class="break-card">
+          <div class="cat">Quiet</div>
+          <div class="range" style="color:var(--dim)">20–60m</div>
+          <div class="hours">11pm–5am</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session shape -->
+    <div class="card">
+      <h2>Session Shape</h2>
+      <div class="h-bars">
+        <div class="h-bar-row">
+          <div class="h-bar-label">size</div>
+          <div class="h-bar-track">
+            <div class="h-bar-fill" style="width:51%;background:var(--accent);">8–35</div>
+            <div class="h-bar-range">mean 18</div>
+          </div>
+        </div>
+        <div class="h-bar-row">
+          <div class="h-bar-label">opener</div>
+          <div class="h-bar-track">
+            <div class="h-bar-fill" style="width:20%;background:var(--green);">1–3</div>
+            <div class="h-bar-range">organic</div>
+          </div>
+        </div>
+        <div class="h-bar-row">
+          <div class="h-bar-label">tail</div>
+          <div class="h-bar-track">
+            <div class="h-bar-fill" style="width:25%;background:var(--orange);">last 3</div>
+            <div class="h-bar-range">1.5x delay</div>
+          </div>
+        </div>
+        <div class="h-bar-row">
+          <div class="h-bar-label">pause</div>
+          <div class="h-bar-track">
+            <div class="h-bar-fill" style="width:30%;background:var(--pink);">20%</div>
+            <div class="h-bar-range">15–45s</div>
+          </div>
+        </div>
+        <div class="h-bar-row">
+          <div class="h-bar-label">sessions</div>
+          <div class="h-bar-track">
+            <div class="h-bar-fill" style="width:70%;background:var(--accent-l);">up to 32</div>
+            <div class="h-bar-range">/day</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Hourly weights chart ──
+const weights = {
+  0:0.01,1:0.00,2:0.00,3:0.00,4:0.00,5:0.02,
+  6:0.06,7:0.08,8:0.04,9:0.03,10:0.03,11:0.04,
+  12:0.09,13:0.09,14:0.04,15:0.03,16:0.04,
+  17:0.08,18:0.09,19:0.08,20:0.06,21:0.05,22:0.03,23:0.01
+};
+const maxW = Math.max(...Object.values(weights));
+const chart = document.getElementById('hourlyChart');
+const cats = {
+  0:"quiet",1:"quiet",2:"quiet",3:"quiet",4:"quiet",5:"quiet",
+  6:"normal",7:"normal",8:"work",9:"work",10:"work",11:"work",
+  12:"peak",13:"peak",14:"work",15:"work",16:"work",
+  17:"peak",18:"peak",19:"peak",20:"normal",21:"normal",22:"normal",23:"quiet"
+};
+const catColors = { peak:'var(--pink)', normal:'var(--accent-l)', work:'var(--orange)', quiet:'rgba(255,255,255,0.15)' };
+
+for (let h = 0; h < 24; h++) {
+  const w = weights[h];
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.height = Math.max(2, (w / maxW) * 100) + '%';
+  bar.style.background = catColors[cats[h]];
+  bar.innerHTML = `<div class="tooltip">${h}:00 — ${(w*100).toFixed(0)}% (${cats[h]})</div>`;
+  chart.appendChild(bar);
+}
+
+// ── Action delays ──
+const delays = {
+  profile_view: [8, 25],
+  follow: [8, 20],
+  comment_like: [4, 10],
+  post_like: [2, 6],
+  post_save: [2, 6],
+  story_view: [2, 5],
+  unfollow: [3, 8],
+  story_like: [1, 3],
+};
+const maxDelay = 25;
+const delayContainer = document.getElementById('delayBars');
+const delayColors = ['var(--accent)','var(--accent-l)','var(--pink)','var(--green)','var(--orange)','var(--red)','var(--dim)','var(--pink)'];
+let di = 0;
+for (const [name, [min, max]] of Object.entries(delays)) {
+  const row = document.createElement('div');
+  row.className = 'h-bar-row';
+  const pct = (max / maxDelay) * 100;
+  const minPct = (min / maxDelay) * 100;
+  row.innerHTML = `
+    <div class="h-bar-label">${name}</div>
+    <div class="h-bar-track">
+      <div class="h-bar-fill" style="width:${pct}%;background:${delayColors[di % delayColors.length]};opacity:0.7;">
+        <span style="position:absolute;left:${minPct}%;top:0;bottom:0;width:2px;background:rgba(255,255,255,0.3);"></span>
+      </div>
+      <div class="h-bar-range">${min}–${max}s</div>
+    </div>
+  `;
+  delayContainer.appendChild(row);
+  di++;
+}
+
+// ── Action weights donut ──
+const actionWeights = {
+  story_view: 0.20,
+  profile_view: 0.20,
+  post_like: 0.20,
+  story_like: 0.15,
+  follow: 0.10,
+  comment_like: 0.08,
+  post_save: 0.07,
+};
+const donutColors = ['#6c5ce7','#a29bfe','#fd79a8','#00cec9','#fdcb6e','#ff6b6b','#74b9ff'];
+const svg = document.getElementById('donutSvg');
+const legend = document.getElementById('donutLegend');
+let cumulative = 0;
+const radius = 35, cx = 50, cy = 50;
+
+Object.entries(actionWeights).forEach(([name, weight], i) => {
+  const startAngle = cumulative * 2 * Math.PI - Math.PI / 2;
+  cumulative += weight;
+  const endAngle = cumulative * 2 * Math.PI - Math.PI / 2;
+  const largeArc = weight > 0.5 ? 1 : 0;
+  const x1 = cx + radius * Math.cos(startAngle);
+  const y1 = cy + radius * Math.sin(startAngle);
+  const x2 = cx + radius * Math.cos(endAngle);
+  const y2 = cy + radius * Math.sin(endAngle);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`);
+  path.setAttribute('fill', donutColors[i]);
+  path.setAttribute('stroke', 'var(--surface)');
+  path.setAttribute('stroke-width', '1');
+  svg.appendChild(path);
+
+  legend.innerHTML += `
+    <div class="donut-legend-item">
+      <div class="swatch" style="background:${donutColors[i]}"></div>
+      <span>${name}</span>
+      <span class="pct">${(weight*100).toFixed(0)}%</span>
+    </div>
+  `;
+});
+
+// Center hole
+const hole = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+hole.setAttribute('cx', cx);
+hole.setAttribute('cy', cy);
+hole.setAttribute('r', '20');
+hole.setAttribute('fill', 'var(--surface)');
+svg.appendChild(hole);
+
+// ── Warmup curve ──
+const curveSvg = document.getElementById('warmupCurve');
+const W = 400, H = 160, pad = 30;
+const floor = 0.10, days = 45;
+
+// Axes
+const axisLine = (x1,y1,x2,y2) => {
+  const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+  l.setAttribute('stroke','rgba(255,255,255,0.1)');l.setAttribute('stroke-width','1');
+  return l;
+};
+curveSvg.appendChild(axisLine(pad, H-pad, W-10, H-pad));
+curveSvg.appendChild(axisLine(pad, H-pad, pad, 10));
+
+// Curve
+let points = [];
+for (let d = 0; d <= 60; d++) {
+  let mult;
+  if (d >= days) mult = 1.0;
+  else if (d >= 14) mult = 1.0; // grandfather
+  else mult = floor + (1 - floor) * (d / days);
+  const x = pad + (d / 60) * (W - pad - 10);
+  const y = (H - pad) - mult * (H - pad - 20);
+  points.push(`${x},${y}`);
+}
+const polyline = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+polyline.setAttribute('points', points.join(' '));
+polyline.setAttribute('fill','none');
+polyline.setAttribute('stroke','var(--accent-l)');
+polyline.setAttribute('stroke-width','2.5');
+curveSvg.appendChild(polyline);
+
+// Fill area
+const areaPoints = [...points, `${pad + (60/60)*(W-pad-10)},${H-pad}`, `${pad},${H-pad}`].join(' ');
+const area = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+area.setAttribute('points', areaPoints);
+area.setAttribute('fill','rgba(108,92,231,0.1)');
+curveSvg.appendChild(area);
+
+// Labels
+const addText = (x,y,text,size='9',color='var(--dim)') => {
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill',color);
+  t.setAttribute('font-size',size);t.setAttribute('font-family','JetBrains Mono, monospace');
+  t.textContent = text;
+  curveSvg.appendChild(t);
+};
+addText(pad-5, H-pad+14, '0');
+addText(pad + (14/60)*(W-pad-10)-4, H-pad+14, '14');
+addText(pad + (45/60)*(W-pad-10)-4, H-pad+14, '45');
+addText(pad + (60/60)*(W-pad-10)-8, H-pad+14, '60');
+addText(2, (H-pad) - 0.1*(H-pad-20)+3, '10%', '8');
+addText(2, (H-pad) - 1.0*(H-pad-20)+3, '100%', '8');
+
+// Day 14 marker
+const x14 = pad + (14/60)*(W-pad-10);
+curveSvg.appendChild(axisLine(x14, H-pad, x14, (H-pad) - 1.0*(H-pad-20)));
+addText(x14+4, 20, 'grandfather', '8', 'var(--green)');
+</script>
+
+</body>
+</html>

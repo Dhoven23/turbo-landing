@@ -21,7 +21,6 @@
 
   .phone {
     width: 375px;
-    height: 812px;
     background: #0a0a0a;
     border-radius: 44px;
     border: 3px solid #222;
@@ -69,9 +68,8 @@
   }
 
   .screen {
-    height: calc(100% - 34px);
     overflow-y: auto;
-    padding: 48px 24px 40px;
+    padding: 48px 20px 40px;
     scrollbar-width: none;
   }
   .screen::-webkit-scrollbar { display: none; }
@@ -82,15 +80,15 @@
     letter-spacing: 3px;
     text-transform: uppercase;
     color: #c8ff00;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   h1 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1.15;
     color: #e8e8e8;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     letter-spacing: -0.5px;
   }
 
@@ -101,157 +99,279 @@
   }
 
   .sub {
-    font-size: 13px;
+    font-size: 12px;
     color: #555;
     line-height: 1.6;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
 
   .divider {
     height: 1px;
     background: #1a1a1a;
-    margin: 24px 0;
+    margin: 20px 0;
   }
 
-  /* ---- SPLIT COLUMNS ---- */
-  .split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .col-label {
+  /* ---- SECTION LABELS ---- */
+  .label {
     font-family: 'Space Mono', monospace;
     font-size: 9px;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 10px;
   }
-  .col-label.red { color: #ff3b3b; }
-  .col-label.green { color: #00d26a; }
+  .label.red { color: #ff3b3b; }
+  .label.green { color: #00d26a; }
+  .label.muted { color: #666; }
+  .label.accent { color: #c8ff00; }
 
-  .col-items {
+  /* ---- PROBLEMS ---- */
+  .problems {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
 
-  .col-item {
-    font-size: 11px;
-    line-height: 1.4;
-    padding: 8px 10px;
-    border-radius: 6px;
+  .problem {
     display: flex;
     align-items: flex-start;
-    gap: 6px;
-  }
-
-  .col-item .icon {
-    flex-shrink: 0;
-    font-size: 9px;
-    margin-top: 2px;
-  }
-
-  .left-col .col-item {
+    gap: 8px;
+    padding: 8px 10px;
     background: #1a0a0a;
-    color: #884444;
     border: 1px solid #2a1111;
-  }
-  .left-col .icon { color: #ff3b3b; }
-
-  .right-col .col-item {
-    background: #0a1a0a;
-    color: #aaddaa;
-    border: 1px solid #112a11;
-  }
-  .right-col .icon { color: #c8ff00; }
-
-  /* ---- OFFER DETAILS ---- */
-  .label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #c8ff00;
-    margin-bottom: 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #884444;
+    line-height: 1.4;
   }
 
-  .features {
+  .problem .x {
+    color: #ff3b3b;
+    font-weight: 700;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ---- OFFER ITEMS ---- */
+  .offers {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 4px;
   }
 
-  .feature {
+  .offer {
     padding: 10px 12px;
     background: #111;
     border-radius: 8px;
   }
 
-  .feature-title {
-    font-size: 13px;
+  .offer-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e8e8e8;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .offer-title .diamond {
+    color: #c8ff00;
+    font-size: 8px;
+  }
+
+  .offer-desc {
+    font-size: 10px;
+    color: #555;
+    line-height: 1.5;
+    padding-left: 14px;
+  }
+
+  /* ---- STEPS ---- */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #3a4a00;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .step-title {
+    font-size: 11px;
     font-weight: 700;
     color: #e8e8e8;
     margin-bottom: 2px;
   }
 
-  .feature-desc {
+  .step-desc {
     font-size: 10px;
     color: #555;
-    line-height: 1.5;
+    line-height: 1.4;
   }
 
-  /* ---- COMPACT PRICING ---- */
+  /* ---- COMPARISON TABLE ---- */
+  .compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+  }
+
+  .compare th {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 2px solid #1a1a1a;
+    color: #555;
+  }
+
+  .compare th:last-child { color: #c8ff00; }
+
+  .compare td {
+    padding: 7px 6px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #666;
+  }
+
+  .compare td:first-child {
+    color: #ccc;
+    font-weight: 500;
+  }
+
+  .compare tr:last-child td { border-bottom: none; }
+
+  .compare .yes { color: #00d26a; font-weight: 700; }
+  .compare .no { color: #ff3b3b; }
+
+  /* ---- PRICING ---- */
   .pricing-strip {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .price-box {
-    padding: 14px;
+  .tier {
+    padding: 12px;
     background: #111;
     border: 1px solid #1a1a1a;
     border-radius: 10px;
-    text-align: center;
   }
 
-  .price-box.pop {
+  .tier.pop {
     border-color: #c8ff00;
+    position: relative;
   }
 
-  .pb-name {
+  .tier.pop::after {
+    content: 'POPULAR';
+    position: absolute;
+    top: -7px;
+    right: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 1px;
+    background: #c8ff00;
+    color: #0a0a0a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .tier-name {
     font-weight: 700;
     font-size: 13px;
     color: #e8e8e8;
   }
 
-  .pb-for {
+  .tier-for {
     font-size: 9px;
     color: #444;
     margin-bottom: 8px;
   }
 
-  .pb-price {
-    font-size: 32px;
+  .tier-price {
+    font-size: 28px;
     font-weight: 700;
     color: #e8e8e8;
     letter-spacing: -1.5px;
     line-height: 1;
   }
 
-  .pb-price span {
-    font-size: 12px;
+  .tier-price span {
+    font-size: 11px;
     font-weight: 400;
     color: #444;
     letter-spacing: 0;
   }
 
-  .pb-note {
+  .tier-features {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .tier-features li {
     font-size: 9px;
-    color: #333;
-    margin-top: 4px;
+    color: #888;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .tier-features li::before {
+    content: '\2192';
+    position: absolute;
+    left: 0;
+    color: #c8ff00;
+    font-weight: 700;
+  }
+
+  .cta-btn {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 10px;
+  }
+
+  .cta-primary {
+    background: #c8ff00;
+    color: #0a0a0a;
+  }
+
+  .cta-secondary {
+    background: transparent;
+    color: #e8e8e8;
+    border: 1px solid #1a1a1a;
   }
 
   /* ---- GUARANTEE ---- */
@@ -266,7 +386,7 @@
     font-size: 12px;
     font-weight: 700;
     color: #e8e8e8;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
 
   .guarantee-text {
@@ -282,17 +402,19 @@
     margin-top: 20px;
     font-family: 'Space Mono', monospace;
     letter-spacing: 1px;
+    padding-bottom: 20px;
   }
 
   .home-bar {
-    position: absolute;
-    bottom: 8px;
+    position: sticky;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 134px;
     height: 5px;
     background: #333;
     border-radius: 3px;
+    margin: 0 auto 8px;
   }
 </style>
 </head>
@@ -307,70 +429,157 @@
 
   <div class="screen">
 
+    <!-- HERO -->
     <div class="brand">Instamaxxing</div>
     <h1>We grow your Instagram with <span class="strike">followers</span> future&nbsp;customers.</h1>
-    <p class="sub">Targeted prospect identification and human-patterned engagement. Every action logged. Your account never at risk.</p>
+    <p class="sub">Targeted prospect identification and human-patterned engagement for small businesses. Every action logged. Every target justified. Your account never at risk.</p>
 
     <div class="divider"></div>
 
-    <!-- RED vs GREEN -->
-    <div class="split">
-      <div class="left-col">
-        <div class="col-label red">Everyone else</div>
-        <div class="col-items">
-          <div class="col-item"><span class="icon">&#10005;</span> Fake followers</div>
-          <div class="col-item"><span class="icon">&#10005;</span> Account bans</div>
-          <div class="col-item"><span class="icon">&#10005;</span> Random hashtag spray</div>
-          <div class="col-item"><span class="icon">&#10005;</span> Zero transparency</div>
-          <div class="col-item"><span class="icon">&#10005;</span> Vanity metrics</div>
+    <!-- PROBLEMS -->
+    <div class="label red">You've seen this movie before</div>
+    <div class="problems">
+      <div class="problem"><span class="x">&#10005;</span> Paid for growth, got 500 followers from Bangladesh who never liked a post</div>
+      <div class="problem"><span class="x">&#10005;</span> Account shadowbanned for 3 weeks — reach dropped 90% overnight</div>
+      <div class="problem"><span class="x">&#10005;</span> "AI targeting" that sprays likes at random hashtag followers</div>
+      <div class="problem"><span class="x">&#10005;</span> No idea what they did — just a number that went up, then back down</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OFFER -->
+    <div class="label green">What you actually get</div>
+    <div class="offers">
+      <div class="offer">
+        <div class="offer-title"><span class="diamond">&#9670;</span> ICP-Targeted Prospect Lists</div>
+        <div class="offer-desc">Competitor follower overlap, engagement scoring, network mapping. We find people who actually match your ideal customer.</div>
+      </div>
+      <div class="offer">
+        <div class="offer-title"><span class="diamond">&#9670;</span> Human-Patterned Engagement</div>
+        <div class="offer-desc">Story views, likes, follows that mirror real phone-pickup behavior. Session-based timing, natural delays. It looks human because it acts human.</div>
+      </div>
+      <div class="offer">
+        <div class="offer-title"><span class="diamond">&#9670;</span> Full Transparency Dashboard</div>
+        <div class="offer-desc">See who we targeted, why, what actions we took, and who followed back. Every interaction logged with timestamps.</div>
+      </div>
+      <div class="offer">
+        <div class="offer-title"><span class="diamond">&#9670;</span> Account Safety Guarantee</div>
+        <div class="offer-desc">45-day warm-up. Hourly budget caps. Severity-based backoff. Engineered like a safety system, not a growth hack.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <div class="label muted">How it works</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Tell us your competitors and ICP</div>
+          <div class="step-desc">Who are the 3-5 accounts your prospects already follow?</div>
         </div>
       </div>
-      <div class="right-col">
-        <div class="col-label green">Instamaxxing</div>
-        <div class="col-items">
-          <div class="col-item"><span class="icon">&#9670;</span> Real prospects</div>
-          <div class="col-item"><span class="icon">&#9670;</span> Engineered safety</div>
-          <div class="col-item"><span class="icon">&#9670;</span> ICP graph targeting</div>
-          <div class="col-item"><span class="icon">&#9670;</span> Full audit trail</div>
-          <div class="col-item"><span class="icon">&#9670;</span> Leads you can close</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">We build your prospect graph</div>
+          <div class="step-desc">Follower overlap, engagement scoring, network mapping. Real prospects, not lurkers.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Autonomous engagement runs daily</div>
+          <div class="step-desc">Mission-driven sessions throughout the day. Stories, likes, follows — all within safe limits.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">You close the warm leads</div>
+          <div class="step-desc">Weekly report: who engaged back, who followed, who's ready for a DM.</div>
         </div>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- WHAT YOU GET -->
-    <div class="label">What's included</div>
-    <div class="features">
-      <div class="feature">
-        <div class="feature-title">ICP-Targeted Prospect Lists</div>
-        <div class="feature-desc">Competitor follower overlap, engagement scoring, network mapping. We find people who actually match your ideal customer.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">Autonomous Daily Engagement</div>
-        <div class="feature-desc">Story views, likes, follows -- session-based, human-timed, with 45-day warm-up and hourly budget caps.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-title">Weekly Prospect Report</div>
-        <div class="feature-desc">Who engaged back, who followed, who's ready for a DM. You do the human part.</div>
-      </div>
-    </div>
+    <!-- COMPARISON -->
+    <table class="compare">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Typical</th>
+          <th>Instamaxxing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Targeting</td>
+          <td>Hashtags</td>
+          <td class="yes">ICP graph</td>
+        </tr>
+        <tr>
+          <td>Transparency</td>
+          <td class="no">None</td>
+          <td class="yes">Full log</td>
+        </tr>
+        <tr>
+          <td>Safety</td>
+          <td class="no">Hope</td>
+          <td class="yes">Engineered</td>
+        </tr>
+        <tr>
+          <td>Followers</td>
+          <td>Random / bots</td>
+          <td class="yes">Prospects</td>
+        </tr>
+        <tr>
+          <td>Pattern</td>
+          <td class="no">Bot bursts</td>
+          <td class="yes">Human-timed</td>
+        </tr>
+        <tr>
+          <td>Verifiable</td>
+          <td class="no">No</td>
+          <td class="yes">Full audit</td>
+        </tr>
+      </tbody>
+    </table>
 
     <div class="divider"></div>
 
     <!-- PRICING -->
+    <div class="label accent">Simple pricing</div>
     <div class="pricing-strip">
-      <div class="price-box">
-        <div class="pb-name">Starter</div>
-        <div class="pb-for">1 account</div>
-        <div class="pb-price">$99<span>/mo</span></div>
-        <div class="pb-note">Cancel anytime</div>
+      <div class="tier">
+        <div class="tier-name">Starter</div>
+        <div class="tier-for">Solo, 1 account</div>
+        <div class="tier-price">$99<span>/mo</span></div>
+        <ul class="tier-features">
+          <li>1 Instagram account</li>
+          <li>3 competitor seeds</li>
+          <li>Daily engagement</li>
+          <li>Weekly report</li>
+          <li>Full dashboard</li>
+          <li>Safety guarantee</li>
+        </ul>
+        <a href="#" class="cta-btn cta-secondary">Start free trial</a>
       </div>
-      <div class="price-box pop">
-        <div class="pb-name">Growth</div>
-        <div class="pb-for">Teams & agencies</div>
-        <div class="pb-price">$250<span>/mo</span></div>
-        <div class="pb-note">Cancel anytime</div>
+      <div class="tier pop">
+        <div class="tier-name">Growth</div>
+        <div class="tier-for">Agencies & teams</div>
+        <div class="tier-price">$250<span>/mo</span></div>
+        <ul class="tier-features">
+          <li>Everything in Starter</li>
+          <li>10 seeds per account</li>
+          <li>Multi-account dashboard</li>
+          <li>Campaign templates</li>
+          <li>Priority onboarding</li>
+          <li>Dedicated Slack</li>
+        </ul>
+        <a href="#" class="cta-btn cta-primary">Book a demo</a>
       </div>
     </div>
 
@@ -379,7 +588,7 @@
     <!-- GUARANTEE -->
     <div class="guarantee">
       <div class="guarantee-title">Zero-risk guarantee</div>
-      <p class="guarantee-text">Account restricted by our service? We pause, cover recovery, and refund your last month.</p>
+      <p class="guarantee-text">Account restricted by our service? We pause immediately, cover recovery free, and refund your last month. No questions.</p>
     </div>
 
     <div class="footer-line">Built by engineers, not marketers.</div>
